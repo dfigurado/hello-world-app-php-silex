@@ -10,7 +10,6 @@ use Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-
 // Load from .env file
 $dotenv = new Dotenv\Dotenv(__DIR__);
 $dotenv->load();
@@ -18,6 +17,9 @@ $dotenv->load();
 $app = new Application();
 $app['debug'] = true;
 
+/**
+ * Load Callback URL
+ */
 $app->get('/load', function (Request $request) use ($app) {
 
 	$data = verifySignedRequest($request->get('signed_payload'));
@@ -34,6 +36,9 @@ $app->get('/load', function (Request $request) use ($app) {
 	return 'Welcome ' . json_encode($user, true);
 });
 
+/**
+ * Auth Callback URL
+ */
 $app->get('/auth/callback', function (Request $request) use ($app) {
 	$redis = new Credis_Client('localhost');
 
@@ -165,7 +170,7 @@ function getRecentlyPurchasedProducts($customerId)
 /**
  * Configure the static BigCommerce API client with the authorized app's auth token, the client ID from the environment
  * and the store's hash as provided.
- * @param string $storeHash Store hash to point the BigCommece API to for outgoing requests.
+ * @param string $storeHash Store hash to point the BigCommerce API to for outgoing requests.
  */
 function configureBCApi($storeHash)
 {
@@ -255,6 +260,7 @@ function bcAuthService()
 	$bcAuthService = getenv('BC_AUTH_SERVICE');
 	return $bcAuthService ?: '';
 }
+
 
 function getUserKey($storeHash, $email)
 {
