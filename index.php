@@ -42,7 +42,7 @@ $app->get('/load', function (Request $request) use ($app) {
 $app->get('/auth/callback', function (Request $request) use ($app) {
 	$redis = new Credis_Client('ns-bg-hello-world.herokuapp.com');
 
-	$payload = array(
+	$payload = [
 		'client_id' => clientId(),
 		'client_secret' => clientSecret(),
 		'redirect_uri' => callbackUrl(),
@@ -50,13 +50,15 @@ $app->get('/auth/callback', function (Request $request) use ($app) {
 		'code' => $request->get('code'),
 		'scope' => $request->get('scope'),
 		'context' => $request->get('context'),
-	);
+    ];
 
 	$client = new Client(bcAuthService());
 	$req = $client->post('/oauth2/token', array(), $payload, array(
 		'exceptions' => false,
 	));
 	$resp = $req->send();
+
+    writeToLog($payload);
 
 	if ($resp->getStatusCode() == 200) {
 		$data = $resp->json();
@@ -71,7 +73,6 @@ $app->get('/auth/callback', function (Request $request) use ($app) {
 	} else {
 		return 'Something went wrong... [' . $resp->getStatusCode() . '] ' . $resp->getBody();
 	}
-
 });
 
 // Endpoint for removing users in a multi-user setup
@@ -265,6 +266,15 @@ function bcAuthService()
 function getUserKey($storeHash, $email)
 {
 	return "kitty.php:$storeHash:$email";
+}
+
+/**
+ * @param $requestData Log request data
+ */
+function writeToLog($requestData){
+    $fileOpen = fopen("/logs/log.txt", 'w');
+    fwrite($fileOpen, $requestData);
+    fclose($fileOpen);
 }
 
 $app->run();
