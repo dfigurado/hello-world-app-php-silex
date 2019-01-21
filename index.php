@@ -188,7 +188,7 @@ function configureBCApi($storeHash)
  */
 function getAuthToken($storeHash)
 {
-	$redis = new Credis_Client('ns-bg-hello-world.herokuapp.com');
+	$redis = new Credis_Client('localhost');
 	$authData = json_decode($redis->get("stores/{$storeHash}/auth"));
 	return $authData->access_token;
 }
