@@ -272,7 +272,7 @@ function getUserKey($storeHash, $email)
  * @param $requestData Log request data
  */
 function writeToLog($requestData){
-    $fileOpen = fopen("/logs/log.txt", 'w');
+    $fileOpen = fopen("/log.txt", 'w');
     fwrite($fileOpen, $requestData);
     fclose($fileOpen);
 }
