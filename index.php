@@ -82,7 +82,7 @@ $app->get('/remove-user', function(Request $request) use ($app) {
 	}
 
 	$key = getUserKey($data['store_hash'], $data['user']['email']);
-	$redis = new Credis_Client('localhost');
+	$redis = new Credis_Client('ns-bg-hello-world.herokuapp.com');
 	$redis->del($key);
 	return '[Remove User] '.$data['user']['email'];
 });
